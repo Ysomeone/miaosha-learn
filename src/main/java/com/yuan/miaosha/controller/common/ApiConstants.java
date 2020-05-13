@@ -25,4 +25,14 @@ public class ApiConstants {
      * 抢购失败，请重新操作
      */
     public static final String ERROR400 = "300400";
+
+    /**
+     * 红包已经完了
+     */
+    public static final String ERROR500 = "300500";
+
+    /**
+     * 已经抢到红包
+     */
+    public static final String ERROR600 = "300600";
 }

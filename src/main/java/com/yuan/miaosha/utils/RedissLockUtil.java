@@ -1,5 +1,6 @@
 package com.yuan.miaosha.utils;
 
+import org.redisson.api.RBloomFilter;
 import org.redisson.api.RLock;
 import org.redisson.api.RedissonClient;
 
@@ -109,5 +110,33 @@ public class RedissLockUtil {
         } catch (InterruptedException e) {
             return false;
         }
+    }
+
+    public static void test() {
+        RBloomFilter<String> bloomFilter = redissonClient.getBloomFilter("sample");
+        /**
+         * 初始化布隆过滤器，预计统计元素数量为10000000，期望误差率为0.03
+         */
+        int num = 100000;
+        bloomFilter.tryInit(num, 0.03);
+        for (int i = num; i < num; i++) {
+            bloomFilter.add(i + "");
+        }
+        int count = 0;
+        for (int i = num; i < num + 10000; i++) {
+            if (bloomFilter.contains(i + "")) {
+                count++;
+            }
+        }
+        /**
+         * 测试结果（一共误判了286个，误判率：0.0286）
+         */
+        System.out.println("一共误判了" + count);
+        System.out.println("误判率：" + (double) count / 10000);
+    }
+
+    public static void main(String[] args) {
+        RBloomFilter<String> bloomFilter = redissonClient.getBloomFilter("sample");
+
     }
 }

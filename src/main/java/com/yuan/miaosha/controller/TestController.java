@@ -4,7 +4,8 @@ package com.yuan.miaosha.controller;
 
 import com.yuan.miaosha.controller.common.Paramap;
 import com.yuan.miaosha.controller.common.Result;
-import com.yuan.miaosha.entity.Test;
+import com.yuan.miaosha.utils.RedissLockUtil;
+import com.yuan.miaosha.entity.*;
 import io.swagger.annotations.*;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -41,4 +42,13 @@ public class TestController {
         Paramap t1 = Paramap.create().put("t", t);
         return Result.jsonStringOk(t);
     }
+
+    @ApiOperation(value = "测试布隆过滤器", notes = "测试布隆过滤器")
+    @RequestMapping(value = "/testBloomFilter.json", method = RequestMethod.POST)
+    @ApiResponses({@ApiResponse(code = 5000001, message = "参数错误")})
+    public Result<Test>  testBloomFilter() {
+        RedissLockUtil.test();
+        return Result.jsonStringOk();
+    }
+
 }

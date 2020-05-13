@@ -1,0 +1,250 @@
+﻿<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!-- namespace必须指向Dao接口 -->
+<mapper namespace="com.yuan.miaosha.dao.RedEnvelopeDao">
+	
+	<resultMap id="RedEnvelopeResultMap" type="com.yuan.miaosha.entity.RedEnvelope">
+		<id property="id" column="id"  />
+		<result property="amount" column="amount" />
+		<result property="num" column="num" />
+		<result property="createTime" column="create_time" />
+		<result property="updateTime" column="update_time" />
+	</resultMap>
+	
+	<!-- 定义可重用的SQL代码段，可以包含在其他语句中 -->
+	<sql id="base_column">
+		 id ,amount ,num ,create_time ,update_time 
+	</sql>
+	
+	<sql id="base_value_column">
+		 #{id},#{amount},#{num},#{createTime},#{updateTime}
+	</sql>
+	
+	<!-- 定义可重用的WHERE SQL公共代码段，可以包含在其他语句中 -->
+	<sql id="where_column">
+       <if test="ids != null  and ids.size > 0  ">
+			AND ID IN
+			<foreach item="id" index="index" collection="ids" open="("
+				separator="," close=")">
+				#{id}
+			</foreach>
+		</if>
+
+		<if test="id != null ">
+			AND id = #{id,jdbcType=BIGINT}
+		</if>
+
+	    	<!-- 大于等于id -->
+		<if test="filter_ids != null">
+			AND id<![CDATA[>=]]>#{filter_ids}
+		</if>
+		<!-- 小于等于id -->
+	    <if test="filter_ide!= null">
+			AND id<![CDATA[<=]]>#{filter_ide}
+		</if>
+
+
+		<if test="amount != null ">
+			AND amount = #{amount,jdbcType=DECIMAL}
+		</if>
+
+	    	<!-- 大于等于amount -->
+		<if test="filter_amounts != null">
+			AND amount<![CDATA[>=]]>#{filter_amounts}
+		</if>
+		<!-- 小于等于amount -->
+	    <if test="filter_amounte!= null">
+			AND amount<![CDATA[<=]]>#{filter_amounte}
+		</if>
+
+
+		<if test="num != null ">
+			AND num = #{num,jdbcType=INTEGER}
+		</if>
+
+	    	<!-- 大于等于num -->
+		<if test="filter_nums != null">
+			AND num<![CDATA[>=]]>#{filter_nums}
+		</if>
+		<!-- 小于等于num -->
+	    <if test="filter_nume!= null">
+			AND num<![CDATA[<=]]>#{filter_nume}
+		</if>
+
+
+		<if test="createTime != null ">
+			AND create_time = #{createTime,jdbcType=TIMESTAMP}
+		</if>
+	    	<!-- 大于等于create_time -->
+		<if test="filter_createTimes != null">
+			AND date_format(create_time,'%Y%m%d')<![CDATA[>=]]>#{filter_createTimes}
+		</if>
+		<!-- 小于等于create_time -->
+	    <if test="filter_createTimee!= null">
+			AND date_format(create_time,'%Y%m%d')<![CDATA[<=]]>#{filter_createTimee}
+		</if>
+
+
+
+		<if test="updateTime != null ">
+			AND update_time = #{updateTime,jdbcType=TIMESTAMP}
+		</if>
+	    	<!-- 大于等于update_time -->
+		<if test="filter_updateTimes != null">
+			AND date_format(update_time,'%Y%m%d')<![CDATA[>=]]>#{filter_updateTimes}
+		</if>
+		<!-- 小于等于update_time -->
+	    <if test="filter_updateTimee!= null">
+			AND date_format(update_time,'%Y%m%d')<![CDATA[<=]]>#{filter_updateTimee}
+		</if>
+
+
+
+	</sql>
+	
+	<!-- 设置语句 -->
+	<sql id="set_column">
+		<if test="id != null ">
+			id = #{id,jdbcType=BIGINT},
+		</if>
+		<if test="amount != null ">
+			amount = #{amount,jdbcType=DECIMAL},
+		</if>
+		<if test="num != null ">
+			num = #{num,jdbcType=INTEGER},
+		</if>
+		<if test="createTime != null ">
+			create_time = #{createTime,jdbcType=TIMESTAMP},
+		</if>
+		<if test="updateTime != null ">
+			update_time = #{updateTime,jdbcType=TIMESTAMP},
+		</if>
+	</sql>
+
+	<!-- 根据ID查询 -->
+	<select id="find" resultMap="RedEnvelopeResultMap">
+		SELECT	<include refid="base_column" />
+		FROM	T_RED_ENVELOPE
+		WHERE	ID=#{id,jdbcType=BIGINT}
+	</select>
+	
+	<!-- 查询所有 -->
+	<select id="findAll" resultMap="RedEnvelopeResultMap">
+		SELECT	<include refid="base_column" />
+		FROM	T_RED_ENVELOPE
+	</select>
+	
+	<!-- 统计记录数 -->
+	<select id="count" resultType="long">
+		SELECT COUNT(*) FROM T_RED_ENVELOPE
+		<where> 
+			<include refid="where_column" />
+		</where>
+	</select>
+	
+	<!-- 插入 -->
+	<insert id="insert" parameterType="com.yuan.miaosha.entity.RedEnvelope">
+		<selectKey resultType="java.lang.Long" order="AFTER" keyProperty="id">  
+	          SELECT LAST_INSERT_ID() AS ID    
+	    </selectKey>  
+		INSERT T_RED_ENVELOPE 
+				(<include refid="base_column" /> )
+		VALUES	(<include refid="base_value_column" />)
+	</insert>
+	
+	<!-- 修改 -->
+	<update id="update" parameterType="com.yuan.miaosha.entity.RedEnvelope">
+		UPDATE	T_RED_ENVELOPE
+		<set>
+			<include refid="set_column" />
+		</set>
+		WHERE	ID = #{id,jdbcType=BIGINT}
+	</update>
+	
+	<!-- 删除单条记录 -->
+	<delete id="delete">
+		DELETE	FROM T_RED_ENVELOPE
+		WHERE	ID = #{id,jdbcType=BIGINT}
+	</delete>
+	
+	
+	<!-- 删除多条记录-->
+	<delete id="deleteAll">
+		DELETE	FROM T_RED_ENVELOPE
+		WHERE	ID	IN
+    	<foreach item="RedEnvelopeId" index="index" collection="ids" open="(" separator="," close=")">
+	  		#{RedEnvelopeId} 
+		</foreach>
+	</delete>
+	
+	<!-- 根据参数查询列表-->
+	<select id="findByParams" resultMap="RedEnvelopeResultMap">
+		SELECT	<include refid="base_column" />
+		FROM 	T_RED_ENVELOPE
+		<where> 1=1
+			<include refid="where_column" />
+		</where>
+	</select>
+	
+	<!-- 分页查询-->
+	<select id="findByPage" resultMap="RedEnvelopeResultMap">
+		SELECT
+		<include refid="base_column" />
+		FROM T_RED_ENVELOPE
+		<where> 1=1
+			<include refid="where_column" />
+		</where>
+	</select>
+
+       <!-- 分页查询-->
+       <select id="findListByPage" resultMap="RedEnvelopeResultMap">
+		SELECT
+		<include refid="base_column" />
+		FROM T_RED_ENVELOPE
+		<where> 1=1
+			<include refid="where_column" />
+		</where>
+					
+	     <if test="order != null and order != ''">
+		order by  ${order}
+	     </if>
+	     
+		<if test="pageNumber != null  and pageSize !=null ">
+			limit  #{pageNumber,jdbcType=INTEGER},#{pageSize,jdbcType=INTEGER}
+	     </if>
+			
+		
+	</select>
+	
+	
+		<!-- 删除多条记录-->
+	<delete id="deletes">
+		DELETE	FROM T_RED_ENVELOPE
+		<where> 
+			<include refid="where_column" />
+		</where>
+	</delete>
+	
+ <!-- 新分页查询-->
+       <select id="findListNewByPage" resultMap="RedEnvelopeResultMap">
+		SELECT
+		<include refid="base_column" />
+		FROM T_RED_ENVELOPE
+		<where> 1=1
+			<include refid="where_column" />
+		</where>
+					
+	     <if test="order != null and order != ''">
+		order by  ${order}
+	     </if>
+	     
+		<if test="pageNumber != null  and pageSize !=null ">
+			limit  #{pageNumber,jdbcType=INTEGER},#{pageSize,jdbcType=INTEGER}
+	     </if>
+			
+		
+	</select>
+	
+</mapper>

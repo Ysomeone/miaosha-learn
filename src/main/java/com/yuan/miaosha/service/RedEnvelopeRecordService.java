@@ -18,5 +18,5 @@ public interface RedEnvelopeRecordService extends GenericService<RedEnvelopeReco
 
     public Long deletes(Object parameter);
 
-    void saveRecord(Long userId, Long redEnvelopeId,String result);
+    String saveRecord(Long userId, Long redEnvelopeId,String result);
 }

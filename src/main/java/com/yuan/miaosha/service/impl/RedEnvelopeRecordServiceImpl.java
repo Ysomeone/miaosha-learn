@@ -44,14 +44,15 @@ public class RedEnvelopeRecordServiceImpl extends GenericServiceImpl<RedEnvelope
     }
 
     @Override
-    public void saveRecord(Long userId, Long redEnvelopeId,String result) {
+    public String saveRecord(Long userId, Long redEnvelopeId,String result) {
         RedEnvelopeRecord redEnvelopeRecord = new RedEnvelopeRecord();
         redEnvelopeRecord.setUserId(userId);
-        redEnvelopeRecord.setReward(new BigDecimal(result));
+        redEnvelopeRecord.setReward(new BigDecimal(result).multiply(new BigDecimal(0.01)));
         redEnvelopeRecord.setRedEnvelopeId(redEnvelopeId);
         redEnvelopeRecord.setCreateTime(new Date());
         redEnvelopeRecord.setUpdateTime(new Date());
         redEnvelopeRecordDao.insert(redEnvelopeRecord);
+        return new BigDecimal(result).multiply(new BigDecimal(0.01)).toString();
     }
 
 

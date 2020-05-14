@@ -19,6 +19,7 @@ import javax.annotation.Resource;
  */
 @RestController
 @RequestMapping("/api/kill")
+@Api(value = "秒杀抢购", tags = "秒杀抢购")
 public class KillController {
 
     @Resource

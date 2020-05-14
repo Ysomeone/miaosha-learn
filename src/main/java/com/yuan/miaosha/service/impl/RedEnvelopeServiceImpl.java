@@ -1,4 +1,5 @@
 package com.yuan.miaosha.service.impl;
+
 import java.util.Date;
 
 import com.yuan.miaosha.controller.common.LuaScript;
@@ -91,6 +92,9 @@ public class RedEnvelopeServiceImpl extends GenericServiceImpl<RedEnvelope, Long
                 redEnvelopeAmount[i] = randomNum[i] - randomNum[i - 1] + 1;
             }
         }
+        /**
+         * 产生的小红包key,以list存储在reids中
+         */
         String key = "envelope:redEnvelopeId:" + redEnvelope.getId();
         Boolean flag = stringRedisTemplate.hasKey(key);
         if (!flag) {
@@ -108,7 +112,13 @@ public class RedEnvelopeServiceImpl extends GenericServiceImpl<RedEnvelope, Long
         redisScript.setResultType(String.class);
         redisScript.setScriptText(LuaScript.redLua);
         List<String> keyList = new ArrayList();
+        /**
+         * 产生的小红包key
+         */
         keyList.add("envelope:redEnvelopeId:" + redEnvelopeId);
+        /**
+         * 红包领取记录key
+         */
         keyList.add("envelope:record:" + redEnvelopeId);
         keyList.add("" + userId);
         keyList.add(String.valueOf(userId));

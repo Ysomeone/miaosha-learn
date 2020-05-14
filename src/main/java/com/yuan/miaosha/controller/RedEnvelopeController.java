@@ -1,9 +1,11 @@
 package com.yuan.miaosha.controller;
 
 import com.yuan.miaosha.controller.common.ApiConstants;
+import com.yuan.miaosha.controller.common.Paramap;
 import com.yuan.miaosha.controller.common.Result;
 import com.yuan.miaosha.service.RedEnvelopeRecordService;
 import com.yuan.miaosha.service.RedEnvelopeService;
+import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
@@ -20,6 +22,7 @@ import javax.annotation.Resource;
  */
 @RestController
 @RequestMapping("/api/redEnvelope")
+@Api(value = "redis Lua 抢红包", tags = "redis Lua 抢红包")
 public class RedEnvelopeController {
 
 
@@ -30,8 +33,8 @@ public class RedEnvelopeController {
     private RedEnvelopeRecordService redEnvelopeRecordService;
 
     /**
-     * @param amount
-     * @param num
+     * @param amount 红包金额
+     * @param num  数量
      * @return
      * @throws Exception
      */
@@ -66,11 +69,11 @@ public class RedEnvelopeController {
         } else if (result.equals("-1")) {
             return Result.jsonStringError("已经抢到红包", ApiConstants.ERROR600);
         } else {
-            redEnvelopeRecordService.saveRecord(userId,redEnvelopeId,result);
+            String reward = redEnvelopeRecordService.saveRecord(userId, redEnvelopeId, result);
+            Paramap.create().put("info", "用户" + userId + "：抢到红包" + reward + "元");
+            return Result.jsonStringOk();
         }
 
-
-        return Result.jsonStringOk();
     }
 
 

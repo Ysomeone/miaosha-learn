@@ -29,6 +29,7 @@ public interface RedEnvelopeService extends GenericService<RedEnvelope, Long> {
     /**
      *
      *抢红包
+     *
      * @param userId
      * @param redEnvelopeId
      */

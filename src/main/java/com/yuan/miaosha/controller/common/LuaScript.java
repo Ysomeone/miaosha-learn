@@ -21,4 +21,19 @@ public class LuaScript {
             "return '-2';\n" +
             "end\n" +
             "end";
+
+    /**
+     * 通过KEYS[1]拿到value(不存在则赋值0)，该值+1判断是否大于请求的最大次数，大于则加一并返回-1(表明已经被限流)，小于则加一并设置过期为传入KEYS[3]
+     */
+    public static String limit = "local key=KEYS[1]\n " +
+            "local limit=tonumber(KEYS[2])\n" +
+            "local num = tonumber(redis.call('get', key) or \"0\")\n" +
+            "if num+1 > limit then \n" +
+            "    redis.call(\"INCRBY\", key,\"1\") \n" +
+            "    return -1 \n" +
+            "else  \n" +
+            "    redis.call(\"INCRBY\", key,\"1\")\n" +
+            "        redis.call(\"expire\", key,KEYS[3]) \n" +
+            "    return num \n" +
+            "end";
 }

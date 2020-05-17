@@ -35,4 +35,14 @@ public class ApiConstants {
      * 已经抢到红包
      */
     public static final String ERROR600 = "300600";
+
+    /**
+     * 人数过多，请再次尝试！
+     */
+    public static final String ERROR700 = "300700";
+
+    /**
+     * 请勿重新提交
+     */
+    public static final String ERROR800 = "300800";
 }

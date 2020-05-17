@@ -38,4 +38,5 @@ public interface RedEnvelopeService extends GenericService<RedEnvelope, Long> {
 
 
 
+
 }

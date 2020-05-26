@@ -5,6 +5,7 @@ import com.yuan.miaosha.annotation.CurrentLimiting;
 import com.yuan.miaosha.controller.common.ApiConstants;
 import com.yuan.miaosha.controller.common.Paramap;
 import com.yuan.miaosha.controller.common.Result;
+import com.yuan.miaosha.service.MqOrderService;
 import com.yuan.miaosha.service.TokenService;
 import com.yuan.miaosha.utils.RedissLockUtil;
 import com.yuan.miaosha.entity.*;
@@ -26,6 +27,10 @@ public class TestController {
 
     @Resource
     private TokenService tokenService;
+
+    @Resource
+    private MqOrderService mqOrderService;
+
 
 
     @ApiOperation(value = "修改用户密码", notes = "根据用户id修改密码", authorizations = {@Authorization("sessionId")})
@@ -66,11 +71,10 @@ public class TestController {
     }
 
 
-
     @ApiOperation(value = "获取token", notes = "获取token")
     @RequestMapping(value = "/getToken.json", method = RequestMethod.POST)
     @ApiResponses({@ApiResponse(code = 5000001, message = "参数错误")})
-    public Result<String> getToken(){
+    public Result<String> getToken() {
         String token = tokenService.createToken();
         Paramap paramap = Paramap.create().put("token", token);
         return Result.jsonStringOk(paramap);
@@ -79,19 +83,28 @@ public class TestController {
     @ApiOperation(value = "校验token", notes = "获取token")
     @RequestMapping(value = "/checkToken.json", method = RequestMethod.POST)
     @ApiResponses({@ApiResponse(code = 5000001, message = "参数错误")})
-    public Result<String> checkToken(String token){
+    public Result<String> checkToken(String token) {
         boolean flag = tokenService.checkToken(token);
-        if(flag){
+        if (flag) {
             /**
              * 做业务逻辑等操作
              */
             return Result.jsonStringOk();
-        }else{
+        } else {
             return Result.jsonStringError("请勿重新提交", ApiConstants.ERROR800);
         }
     }
 
-
+    @ApiOperation(value = "测试下单并超时后改变订单状态", notes = "测试下单并超时后改变订单状态")
+    @RequestMapping(value = "/get.json", method = RequestMethod.POST)
+    @ApiResponses({@ApiResponse(code = 5000001, message = "参数错误")})
+    @ApiImplicitParams({
+            @ApiImplicitParam(paramType = "query", name = "userId", value = "用户userId", required = true, dataType = "long"),
+    })
+    public Result<String> toMqOrder(Long userId) {
+        mqOrderService.saveOrder(userId);
+        return Result.jsonStringOk();
+    }
 
 
 }

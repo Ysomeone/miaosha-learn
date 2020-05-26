@@ -1,0 +1,263 @@
+﻿<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!-- namespace必须指向Dao接口 -->
+<mapper namespace="com.yuan.miaosha.dao.MqOrderDao">
+	
+	<resultMap id="MqOrderResultMap" type="com.yuan.miaosha.entity.MqOrder">
+		<id property="id" column="id"  />
+		<result property="orderNum" column="order_num" />
+		<result property="status" column="status" />
+		<result property="userId" column="user_id" />
+		<result property="createTime" column="create_time" />
+		<result property="updateTime" column="update_time" />
+	</resultMap>
+	
+	<!-- 定义可重用的SQL代码段，可以包含在其他语句中 -->
+	<sql id="base_column">
+		 id ,order_num ,status ,user_id ,create_time ,update_time 
+	</sql>
+	
+	<sql id="base_value_column">
+		 #{id},#{orderNum},#{status},#{userId},#{createTime},#{updateTime}
+	</sql>
+	
+	<!-- 定义可重用的WHERE SQL公共代码段，可以包含在其他语句中 -->
+	<sql id="where_column">
+       <if test="ids != null  and ids.size > 0  ">
+			AND ID IN
+			<foreach item="id" index="index" collection="ids" open="("
+				separator="," close=")">
+				#{id}
+			</foreach>
+		</if>
+
+		<if test="id != null ">
+			AND id = #{id,jdbcType=BIGINT}
+		</if>
+
+	    	<!-- 大于等于id -->
+		<if test="filter_ids != null">
+			AND id<![CDATA[>=]]>#{filter_ids}
+		</if>
+		<!-- 小于等于id -->
+	    <if test="filter_ide!= null">
+			AND id<![CDATA[<=]]>#{filter_ide}
+		</if>
+
+
+		<if test="orderNum != null ">
+			AND order_num = #{orderNum,jdbcType=VARCHAR}
+		</if>
+	   <if test="orderNumlike != null ">
+			AND order_num like CONCAT('%',#{orderNumlike},'%')
+		</if>
+
+
+
+		<if test="status != null ">
+			AND status = #{status,jdbcType=INTEGER}
+		</if>
+
+	    	<!-- 大于等于status -->
+		<if test="filter_statuss != null">
+			AND status<![CDATA[>=]]>#{filter_statuss}
+		</if>
+		<!-- 小于等于status -->
+	    <if test="filter_statuse!= null">
+			AND status<![CDATA[<=]]>#{filter_statuse}
+		</if>
+
+
+		<if test="userId != null ">
+			AND user_id = #{userId,jdbcType=BIGINT}
+		</if>
+
+	    	<!-- 大于等于user_id -->
+		<if test="filter_userIds != null">
+			AND user_id<![CDATA[>=]]>#{filter_userIds}
+		</if>
+		<!-- 小于等于user_id -->
+	    <if test="filter_userIde!= null">
+			AND user_id<![CDATA[<=]]>#{filter_userIde}
+		</if>
+
+
+		<if test="createTime != null ">
+			AND create_time = #{createTime,jdbcType=TIMESTAMP}
+		</if>
+	    	<!-- 大于等于create_time -->
+		<if test="filter_createTimes != null">
+			AND date_format(create_time,'%Y%m%d')<![CDATA[>=]]>#{filter_createTimes}
+		</if>
+		<!-- 小于等于create_time -->
+	    <if test="filter_createTimee!= null">
+			AND date_format(create_time,'%Y%m%d')<![CDATA[<=]]>#{filter_createTimee}
+		</if>
+
+
+
+		<if test="updateTime != null ">
+			AND update_time = #{updateTime,jdbcType=TIMESTAMP}
+		</if>
+	    	<!-- 大于等于update_time -->
+		<if test="filter_updateTimes != null">
+			AND date_format(update_time,'%Y%m%d')<![CDATA[>=]]>#{filter_updateTimes}
+		</if>
+		<!-- 小于等于update_time -->
+	    <if test="filter_updateTimee!= null">
+			AND date_format(update_time,'%Y%m%d')<![CDATA[<=]]>#{filter_updateTimee}
+		</if>
+
+
+
+	</sql>
+	
+	<!-- 设置语句 -->
+	<sql id="set_column">
+		<if test="id != null ">
+			id = #{id,jdbcType=BIGINT},
+		</if>
+		<if test="orderNum != null ">
+			order_num = #{orderNum,jdbcType=VARCHAR},
+		</if>
+		<if test="status != null ">
+			status = #{status,jdbcType=INTEGER},
+		</if>
+		<if test="userId != null ">
+			user_id = #{userId,jdbcType=BIGINT},
+		</if>
+		<if test="createTime != null ">
+			create_time = #{createTime,jdbcType=TIMESTAMP},
+		</if>
+		<if test="updateTime != null ">
+			update_time = #{updateTime,jdbcType=TIMESTAMP},
+		</if>
+	</sql>
+
+	<!-- 根据ID查询 -->
+	<select id="find" resultMap="MqOrderResultMap">
+		SELECT	<include refid="base_column" />
+		FROM	T_MQ_ORDER
+		WHERE	ID=#{id,jdbcType=BIGINT}
+	</select>
+	
+	<!-- 查询所有 -->
+	<select id="findAll" resultMap="MqOrderResultMap">
+		SELECT	<include refid="base_column" />
+		FROM	T_MQ_ORDER
+	</select>
+	
+	<!-- 统计记录数 -->
+	<select id="count" resultType="long">
+		SELECT COUNT(*) FROM T_MQ_ORDER
+		<where> 
+			<include refid="where_column" />
+		</where>
+	</select>
+	
+	<!-- 插入 -->
+	<insert id="insert" parameterType="com.yuan.miaosha.entity.MqOrder">
+		<selectKey resultType="java.lang.Long" order="AFTER" keyProperty="id">  
+	          SELECT LAST_INSERT_ID() AS ID    
+	    </selectKey>  
+		INSERT T_MQ_ORDER 
+				(<include refid="base_column" /> )
+		VALUES	(<include refid="base_value_column" />)
+	</insert>
+	
+	<!-- 修改 -->
+	<update id="update" parameterType="com.yuan.miaosha.entity.MqOrder">
+		UPDATE	T_MQ_ORDER
+		<set>
+			<include refid="set_column" />
+		</set>
+		WHERE	ID = #{id,jdbcType=BIGINT}
+	</update>
+	
+	<!-- 删除单条记录 -->
+	<delete id="delete">
+		DELETE	FROM T_MQ_ORDER
+		WHERE	ID = #{id,jdbcType=BIGINT}
+	</delete>
+	
+	
+	<!-- 删除多条记录-->
+	<delete id="deleteAll">
+		DELETE	FROM T_MQ_ORDER
+		WHERE	ID	IN
+    	<foreach item="MqOrderId" index="index" collection="ids" open="(" separator="," close=")">
+	  		#{MqOrderId} 
+		</foreach>
+	</delete>
+	
+	<!-- 根据参数查询列表-->
+	<select id="findByParams" resultMap="MqOrderResultMap">
+		SELECT	<include refid="base_column" />
+		FROM 	T_MQ_ORDER
+		<where> 1=1
+			<include refid="where_column" />
+		</where>
+	</select>
+	
+	<!-- 分页查询-->
+	<select id="findByPage" resultMap="MqOrderResultMap">
+		SELECT
+		<include refid="base_column" />
+		FROM T_MQ_ORDER
+		<where> 1=1
+			<include refid="where_column" />
+		</where>
+	</select>
+
+       <!-- 分页查询-->
+       <select id="findListByPage" resultMap="MqOrderResultMap">
+		SELECT
+		<include refid="base_column" />
+		FROM T_MQ_ORDER
+		<where> 1=1
+			<include refid="where_column" />
+		</where>
+					
+	     <if test="order != null and order != ''">
+		order by  ${order}
+	     </if>
+	     
+		<if test="pageNumber != null  and pageSize !=null ">
+			limit  #{pageNumber,jdbcType=INTEGER},#{pageSize,jdbcType=INTEGER}
+	     </if>
+			
+		
+	</select>
+	
+	
+		<!-- 删除多条记录-->
+	<delete id="deletes">
+		DELETE	FROM T_MQ_ORDER
+		<where> 
+			<include refid="where_column" />
+		</where>
+	</delete>
+	
+ <!-- 新分页查询-->
+       <select id="findListNewByPage" resultMap="MqOrderResultMap">
+		SELECT
+		<include refid="base_column" />
+		FROM T_MQ_ORDER
+		<where> 1=1
+			<include refid="where_column" />
+		</where>
+					
+	     <if test="order != null and order != ''">
+		order by  ${order}
+	     </if>
+	     
+		<if test="pageNumber != null  and pageSize !=null ">
+			limit  #{pageNumber,jdbcType=INTEGER},#{pageSize,jdbcType=INTEGER}
+	     </if>
+			
+		
+	</select>
+	
+</mapper>

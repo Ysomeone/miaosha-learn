@@ -3,6 +3,7 @@ package com.yuan.miaosha.rabbitmq.consumer;
 import com.yuan.miaosha.entity.MqOrder;
 import com.yuan.miaosha.service.MqOrderService;
 import lombok.extern.log4j.Log4j2;
+import org.springframework.amqp.core.Message;
 import org.springframework.amqp.rabbit.annotation.RabbitHandler;
 import org.springframework.amqp.rabbit.annotation.RabbitListener;
 import org.springframework.messaging.handler.annotation.Payload;
@@ -25,11 +26,12 @@ public class MqOrderConsumer {
     /**
      * 用户下单支付超时-处理服务实例
      *
-     * @param orderId
+     * @param
      */
 //    @RabbitListener(queues = "mq.consumer.order.real.queue.name", containerFactory = "singleListenerContainer")
     @RabbitListener(queues = "mq.queue.name")
-    public void consumerMsg(@Payload Long orderId){
+    public void consumerMsg(@Payload String message){
+        long orderId = Long.parseLong(message);
         log.info("用户下单支付超时-取消订单-取消订单id：orderId={}",orderId);
         MqOrder mqOrder = mqOrderService.find(orderId);
         if(mqOrder!=null && mqOrder.getStatus()==1){

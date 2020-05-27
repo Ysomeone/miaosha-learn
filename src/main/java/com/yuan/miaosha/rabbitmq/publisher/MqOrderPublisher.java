@@ -44,7 +44,6 @@ public class MqOrderPublisher {
             public Message postProcessMessage(Message message) throws AmqpException {
                 MessageProperties messageProperties = message.getMessageProperties();
                 messageProperties.setDeliveryMode(MessageDeliveryMode.PERSISTENT);
-                messageProperties.setHeader(AbstractJavaTypeMapper.DEFAULT_CONTENT_CLASSID_FIELD_NAME,Long.class);
                 message.getMessageProperties().setDelay(6000);
                 return message;
             }
